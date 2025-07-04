@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 39de254c90e05a641b22eb35ad66438e
+timeCreated: 1477674901
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 9076
+  packageName: Action-RPG Starter Kit
+  packageVersion: 6.55c
+  assetPath: Assets/ActionRPGKit/GraphicResources/Model/Props/Materials/rooftile.mat
+  uploadId: 411993

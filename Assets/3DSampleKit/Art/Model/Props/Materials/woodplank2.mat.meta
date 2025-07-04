@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e8a4fde8ce031ab4d8ec2bd852aaaf3a
+timeCreated: 1477674901
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 9076
+  packageName: Action-RPG Starter Kit
+  packageVersion: 6.55c
+  assetPath: Assets/ActionRPGKit/GraphicResources/Model/Props/Materials/woodplank2.mat
+  uploadId: 411993

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: b64a7c6cf1d1be74b9ea4e0d067c61f7
+timeCreated: 1511580381
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 15600000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 9076
+  packageName: Action-RPG Starter Kit
+  packageVersion: 6.55c
+  assetPath: Assets/ActionRPGKit/ExampleScene/Terrains/New Terrain.asset
+  uploadId: 411993

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 961db5d2085d83c4c93f2f415589c649
+timeCreated: 1477674901
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 9076
+  packageName: Action-RPG Starter Kit
+  packageVersion: 6.55c
+  assetPath: Assets/ActionRPGKit/GraphicResources/Model/Props/Materials/prom.mat
+  uploadId: 411993

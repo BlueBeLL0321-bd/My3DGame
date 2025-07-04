@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7c8d3683f9fd89d48ba74a0e1bea98b5
+timeCreated: 1477674901
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 9076
+  packageName: Action-RPG Starter Kit
+  packageVersion: 6.55c
+  assetPath: Assets/ActionRPGKit/GraphicResources/Model/Props/Materials/doortex1j.mat
+  uploadId: 411993

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ed158e00874454243b3cfe55cda91044
+timeCreated: 1477674901
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 9076
+  packageName: Action-RPG Starter Kit
+  packageVersion: 6.55c
+  assetPath: Assets/ActionRPGKit/GraphicResources/Model/Props/Materials/barreltex.mat
+  uploadId: 411993

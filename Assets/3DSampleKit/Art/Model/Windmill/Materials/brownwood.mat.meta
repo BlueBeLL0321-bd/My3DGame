@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 6168bcd1575ca1c4baa57b69505c41c9
+timeCreated: 1511630232
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 9076
+  packageName: Action-RPG Starter Kit
+  packageVersion: 6.55c
+  assetPath: Assets/ActionRPGKit/GraphicResources/Model/Windmill/Materials/brownwood.mat
+  uploadId: 411993

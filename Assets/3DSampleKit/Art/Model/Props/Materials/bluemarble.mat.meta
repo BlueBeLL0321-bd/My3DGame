@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d4d9f016433791649a2091cbf3e22e40
+timeCreated: 1477674901
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 9076
+  packageName: Action-RPG Starter Kit
+  packageVersion: 6.55c
+  assetPath: Assets/ActionRPGKit/GraphicResources/Model/Props/Materials/bluemarble.mat
+  uploadId: 411993
