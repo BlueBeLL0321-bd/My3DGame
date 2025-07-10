@@ -1,0 +1,12 @@
+using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace MyTool.GameData
+{
+	public enum $ENUM$
+	{
+		None = -1,
+		$DATA$
+	}
+}
