@@ -10,6 +10,7 @@ namespace My3DGame.Manager
     {
         #region Variables
         private static EffectData effectData;
+        private static SoundData soundData;
         #endregion
 
         #region Unity Event Method
@@ -20,6 +21,11 @@ namespace My3DGame.Manager
             {
                 effectData = ScriptableObject.CreateInstance<EffectData>();
                 effectData.LoadData();
+            }
+            if (soundData == null)
+            {
+                soundData = ScriptableObject.CreateInstance<SoundData>();
+                soundData.LoadData();
             }
         }
         #endregion
@@ -35,6 +41,18 @@ namespace My3DGame.Manager
             }
 
             return effectData;
+        }
+
+        public static SoundData GetSoundData()
+        {
+            // 데이터 체크
+            if (soundData == null)
+            {
+                soundData = ScriptableObject.CreateInstance<SoundData>();
+                soundData.LoadData();
+            }
+
+            return soundData;
         }
         #endregion
     }

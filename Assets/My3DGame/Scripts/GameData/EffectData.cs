@@ -25,7 +25,7 @@ namespace My3DGame.GameData
         public List<EffectClip> effectClips { get; set; }
         #endregion
 
-        #region Contractor
+        #region Constructor
         public EffectData() { }
         #endregion
 

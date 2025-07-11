@@ -13,7 +13,8 @@ namespace My3DGame.Common
     public enum SoundType
     {
         None = -1,
-        BGM,
+        MUSIC,
+        SFX,
     }
 }
 
