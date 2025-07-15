@@ -3,7 +3,7 @@ using UnityEngine;
 namespace My3DGame
 {
     /// <summary>
-    /// 플레이어 액션을 관리하는 클래스
+    /// 플레이어 액션을 관리하는 클래스(대기, 이동, 점프)
     /// </summary>
     public class PlayerController : MonoBehaviour
     {
@@ -35,20 +35,28 @@ namespace My3DGame
         protected Quaternion m_TargetRotation;      // 인풋에 따른 목표 회전값
         protected float m_AngleDiff;                // 현재 앞 방향의 각과 목표 방향의 각의 차이
 
-        // idle
+        // 대기
         public float idleTimeout = 5f;              // 5초 타임 아웃
+        [SerializeField]
         protected float m_IdleTimer;                // 카운트 다운
 
+        // 점프
+        public float gravity = 20f;                 // 중력값
+        public float jumpSpeed = 10f;               // 점프키를 눌렀을 때 적용되는 스피드 값
+        protected bool m_ReadyToJump = false;       // 점프 대기 중 체크
+
         // 상수 정의
-        const float k_GroundAcceleration = 20f;     // 이동 시 가속도 값
-        const float k_GroundDeceleration = 25f;     // 이동 시 감속도 값
-        const float k_GroundedRayDistance = 1f;     // 바닥으로부터 레이를 쏘는 높이
+        const float k_GroundAcceleration = 20f;             // 이동 시 가속도 값
+        const float k_GroundDeceleration = 25f;             // 이동 시 감속도 값
+        const float k_GroundedRayDistance = 1f;             // 바닥으로부터 레이를 쏘는 높이
         const float k_AirbornedTurnSpeedProportion = 5.4f;
         const float k_InverseOneEighty = 1f / 100f;
+        const float k_StickingGravityProportion = 0.3f;     // 바닥에 있을 때 중력 적용 계수
+        const float k_JumpAbortSpeed = 10f;                 // 점프 키를 떼면 아래로 내려가는 속도를 가속
 
         // 애니메이션 Parameters Hash
         readonly int m_HashForwardSpeed = Animator.StringToHash("ForwardSpeed");
-        readonly int m_HashVerticalSpeed = Animator.StringToHash("VerticalSpeed");
+        readonly int m_HashAirborneVerticalSpeed = Animator.StringToHash("AirborneVerticalSpeed");
         readonly int m_HashAngleDeltaRad = Animator.StringToHash("AngleDeltaRad");
         readonly int m_HashInputDetected = Animator.StringToHash("InputDetected");
         readonly int m_HashGrounded = Animator.StringToHash("Grounded");
@@ -56,6 +64,8 @@ namespace My3DGame
 
         // 애니메이션 상태 Hash
         readonly int m_HashLocomotion = Animator.StringToHash("Locomotion");
+        readonly int m_HashAirborne = Animator.StringToHash("Airborne");
+        readonly int m_HashLanding = Animator.StringToHash("Landing");
 
         // 애니메이션 상태 Tag Hash
         readonly int m_HashBlockInput = Animator.StringToHash("BlockInput");
@@ -67,7 +77,7 @@ namespace My3DGame
         {
             get
             {
-                return Mathf.Approximately(m_Input.Movement.sqrMagnitude, 0f);
+                return !Mathf.Approximately(m_Input.Movement.sqrMagnitude, 0f);
             }
         }
         #endregion
@@ -88,6 +98,7 @@ namespace My3DGame
 
             // 이동
             CalculateForwardMovement();
+            CalculateVerticalMovement();
 
             // 방향 전환
             SetTargetRotation();
@@ -127,9 +138,23 @@ namespace My3DGame
                 movement = m_ForwardSpeed * transform.forward * Time.deltaTime;
             }
 
+            // 애니메이션의 회전값을 캐릭터 컨트롤러에 적용
+            m_CharCtrl.transform.rotation *= m_Animator.deltaRotation;
+
+            // 위아래 이동 속도 적용
+            movement += m_VerticalSpeed * Vector3.up * Time.deltaTime;
 
             // 구한 이동 속도를 캐릭터 컨트롤러에 적용
             m_CharCtrl.Move(movement);
+
+            // 그라운드 체크
+            m_IsGrounded = m_CharCtrl.isGrounded;
+
+            // 애니메이션 적용
+            if(m_IsGrounded == false)
+                m_Animator.SetFloat(m_HashAirborneVerticalSpeed, m_VerticalSpeed);
+
+            m_Animator.SetBool(m_HashGrounded, m_IsGrounded);
         }
         #endregion
 
@@ -148,7 +173,7 @@ namespace My3DGame
             m_IsAnimatorTransitioning = m_Animator.IsInTransition(0);
         }
 
-        // 애니메이션 상태에 따른 인풋 처리
+        // 애니메이션 상태(tag string)에 따른 인풋 처리
         private void UpdateInputBlocking()
         {
             bool inputBlocked = m_CurrentStateInfo.tagHash == m_HashBlockInput && m_IsAnimatorTransitioning;
@@ -169,7 +194,7 @@ namespace My3DGame
             m_DesiredForwardSpeed = moveInput.magnitude * maxForwardSpeed;
 
             // 가속도 값 구하기
-            float acceleration = IsMoveInput ? k_GroundAcceleration : k_GroundDeceleration; ;
+            float acceleration = IsMoveInput ? k_GroundAcceleration : k_GroundDeceleration;
 
             // 실제 앞으로 이동하는 스피드 구하기
             m_ForwardSpeed = Mathf.MoveTowards(m_ForwardSpeed, m_DesiredForwardSpeed, 
@@ -177,6 +202,47 @@ namespace My3DGame
 
             // 애니메이터 파라미터 설정
             m_Animator.SetFloat(m_HashForwardSpeed, m_ForwardSpeed);
+        }
+
+        // 위로 이동
+        private void CalculateVerticalMovement()
+        {
+            // 점프 대기 체크
+            if(!m_Input.Jump && m_IsGrounded)
+            {
+                m_ReadyToJump = true;
+            }
+
+            if(m_IsGrounded)    // 지면 상태
+            {
+                // 중력값의 0.3만큼 적용
+                m_VerticalSpeed = -gravity * k_StickingGravityProportion;
+
+                if(m_Input.Jump && m_ReadyToJump)
+                {
+                    m_VerticalSpeed = jumpSpeed;
+                    m_IsGrounded = false;
+                    m_ReadyToJump = false;
+                }
+            }
+            else                // 공중 상태
+            {
+                // 점프 키 체크
+                if(m_Input.Jump && m_VerticalSpeed > 0f)
+                {
+                    // 점프 키를 떼면 가속시켜 준다
+                    m_VerticalSpeed -= k_JumpAbortSpeed * Time.deltaTime;
+                }
+
+                // m_VerticalSpeed 값 체크
+                if(Mathf.Approximately(m_VerticalSpeed, 0f))
+                {
+                    m_VerticalSpeed = 0f;
+                }
+
+                // 중력 적용
+                m_VerticalSpeed -= gravity * Time.deltaTime;
+            }
         }
 
         // 입력에 따른 방향 전환값 구하기
@@ -222,19 +288,22 @@ namespace My3DGame
         // 회전값 적용 애니메이션 상태 체크
         private bool IsOrientationUpdate()
         {
-            // locomotion(이동) 상태 여부 체크
+            // locomotion(이동), Airborne, Landing 상태 여부 체크
             bool updateOrientationForLocomotion = !m_IsAnimatorTransitioning && m_CurrentStateInfo.shortNameHash == m_HashLocomotion
                 || m_NextStateInfo.shortNameHash == m_HashLocomotion;
+            bool updateOrientationForAirborne = !m_IsAnimatorTransitioning && m_CurrentStateInfo.shortNameHash == m_HashAirborne
+                || m_NextStateInfo.shortNameHash == m_HashAirborne;
+            bool updateOrientationForLanding = !m_IsAnimatorTransitioning && m_CurrentStateInfo.shortNameHash == m_HashLanding
+                || m_NextStateInfo.shortNameHash == m_HashLanding;
 
-            
-            return updateOrientationForLocomotion;
+            return updateOrientationForLocomotion || updateOrientationForAirborne || updateOrientationForLanding;
         }
 
         // 회전값 적용
         private void UpdateOrientation()
         {
             // 애니메이션 파라미터 적용
-            m_Animator.SetFloat(m_HashAngleDeltaRad, m_AngleDiff);
+            m_Animator.SetFloat(m_HashAngleDeltaRad, m_AngleDiff * Mathf.Deg2Rad);
 
             Vector3 localInput = new Vector3(m_Input.Movement.x, 0f, m_Input.Movement.y);
 
@@ -255,7 +324,7 @@ namespace My3DGame
         private void TimeoutToIdle()
         {
             // 입력값 체크 - 이동, 
-            bool inputDetected = IsMoveInput;
+            bool inputDetected = IsMoveInput || m_Input.Jump;
 
             if(m_IsGrounded && !inputDetected)
             {

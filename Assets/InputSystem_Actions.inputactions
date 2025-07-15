@@ -990,6 +990,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "PlayerAgent",
+            "id": "f579852e-cc4a-4a01-a7c0-c682b40a48a1",
+            "actions": [
+                {
+                    "name": "MoveClick",
+                    "type": "Button",
+                    "id": "e17273aa-51a9-4d0d-baa2-f8023ea9ecd9",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "ae5a7288-5846-47ed-878b-9ba9e677b778",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "MoveClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

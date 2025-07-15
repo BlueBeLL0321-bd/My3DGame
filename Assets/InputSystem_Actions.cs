@@ -1076,6 +1076,34 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""PlayerAgent"",
+            ""id"": ""f579852e-cc4a-4a01-a7c0-c682b40a48a1"",
+            ""actions"": [
+                {
+                    ""name"": ""MoveClick"",
+                    ""type"": ""Button"",
+                    ""id"": ""e17273aa-51a9-4d0d-baa2-f8023ea9ecd9"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""ae5a7288-5846-47ed-878b-9ba9e677b778"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""MoveClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -1164,12 +1192,16 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_UI_ScrollWheel = m_UI.FindAction("ScrollWheel", throwIfNotFound: true);
         m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
+        // PlayerAgent
+        m_PlayerAgent = asset.FindActionMap("PlayerAgent", throwIfNotFound: true);
+        m_PlayerAgent_MoveClick = m_PlayerAgent.FindAction("MoveClick", throwIfNotFound: true);
     }
 
     ~@InputSystem_Actions()
     {
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Player.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, InputSystem_Actions.UI.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_PlayerAgent.enabled, "This will cause a leak and performance issues, InputSystem_Actions.PlayerAgent.Disable() has not been called.");
     }
 
     /// <summary>
@@ -1620,6 +1652,102 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="UIActions" /> instance referencing this action map.
     /// </summary>
     public UIActions @UI => new UIActions(this);
+
+    // PlayerAgent
+    private readonly InputActionMap m_PlayerAgent;
+    private List<IPlayerAgentActions> m_PlayerAgentActionsCallbackInterfaces = new List<IPlayerAgentActions>();
+    private readonly InputAction m_PlayerAgent_MoveClick;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "PlayerAgent".
+    /// </summary>
+    public struct PlayerAgentActions
+    {
+        private @InputSystem_Actions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public PlayerAgentActions(@InputSystem_Actions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerAgent/MoveClick".
+        /// </summary>
+        public InputAction @MoveClick => m_Wrapper.m_PlayerAgent_MoveClick;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_PlayerAgent; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="PlayerAgentActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(PlayerAgentActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="PlayerAgentActions" />
+        public void AddCallbacks(IPlayerAgentActions instance)
+        {
+            if (instance == null || m_Wrapper.m_PlayerAgentActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_PlayerAgentActionsCallbackInterfaces.Add(instance);
+            @MoveClick.started += instance.OnMoveClick;
+            @MoveClick.performed += instance.OnMoveClick;
+            @MoveClick.canceled += instance.OnMoveClick;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="PlayerAgentActions" />
+        private void UnregisterCallbacks(IPlayerAgentActions instance)
+        {
+            @MoveClick.started -= instance.OnMoveClick;
+            @MoveClick.performed -= instance.OnMoveClick;
+            @MoveClick.canceled -= instance.OnMoveClick;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="PlayerAgentActions.UnregisterCallbacks(IPlayerAgentActions)" />.
+        /// </summary>
+        /// <seealso cref="PlayerAgentActions.UnregisterCallbacks(IPlayerAgentActions)" />
+        public void RemoveCallbacks(IPlayerAgentActions instance)
+        {
+            if (m_Wrapper.m_PlayerAgentActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="PlayerAgentActions.AddCallbacks(IPlayerAgentActions)" />
+        /// <seealso cref="PlayerAgentActions.RemoveCallbacks(IPlayerAgentActions)" />
+        /// <seealso cref="PlayerAgentActions.UnregisterCallbacks(IPlayerAgentActions)" />
+        public void SetCallbacks(IPlayerAgentActions instance)
+        {
+            foreach (var item in m_Wrapper.m_PlayerAgentActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_PlayerAgentActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="PlayerAgentActions" /> instance referencing this action map.
+    /// </summary>
+    public PlayerAgentActions @PlayerAgent => new PlayerAgentActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -1833,5 +1961,20 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "PlayerAgent" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="PlayerAgentActions.AddCallbacks(IPlayerAgentActions)" />
+    /// <seealso cref="PlayerAgentActions.RemoveCallbacks(IPlayerAgentActions)" />
+    public interface IPlayerAgentActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "MoveClick" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMoveClick(InputAction.CallbackContext context);
     }
 }

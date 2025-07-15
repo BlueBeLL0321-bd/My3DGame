@@ -13,6 +13,7 @@ namespace My3DGame
 
         // input Action
         protected InputAction moveAction;
+        protected InputAction jumpAction;
 
         // 인풋 제어 처리
         [HideInInspector]
@@ -21,6 +22,8 @@ namespace My3DGame
 
         // 이동 wasd 인풋값
         protected Vector2 m_Movement;
+        // 점프
+        protected bool m_Jump;
         #endregion
 
         #region Property
@@ -39,6 +42,19 @@ namespace My3DGame
                 m_Movement = value;
             }
         }
+
+        // 점프
+        public bool Jump
+        {
+            get
+            {
+               return m_Jump && !playerControllInputBlocked && !m_ExternalInputBlocked;
+            }
+            private set
+            {
+                m_Jump = value;
+            }
+        }
         #endregion
 
         #region Unity Event Method
@@ -47,12 +63,17 @@ namespace My3DGame
             // 참조
             inputActions = new InputSystem_Actions();
             moveAction = inputActions.Player.Move;
+            jumpAction = inputActions.Player.Jump;
         }
 
         private void OnEnable()
         {
             // Action Map 활성화
             inputActions.Player.Enable();
+
+            // 이벤트 발생 시 호출되는 함수 등록
+            jumpAction.started += Jump_Started;
+            jumpAction.canceled += Jump_Canceled;
 
             /*// 액션 인풋 처리 샘플 - 이벤트 발생 시 호출되는 함수 등록
             moveAction.performed += Move_Performed;
@@ -64,6 +85,10 @@ namespace My3DGame
         {
             // Action Map 비활성화
             inputActions.Player.Disable();
+
+            // 이벤트 발생 시 호출되는 함수 해제
+            jumpAction.started -= Jump_Started;
+            jumpAction.canceled -= Jump_Canceled;
 
             /*// 액션 인풋 처리 샘플 - 이벤트 발생 시 호출되는 함수 해제
             moveAction.performed -= Move_Performed;
@@ -96,6 +121,15 @@ namespace My3DGame
             return !m_ExternalInputBlocked;
         }
 
+        private void Jump_Started(InputAction.CallbackContext context)
+        {
+            Jump = true;
+        }
+
+        private void Jump_Canceled(InputAction.CallbackContext context)
+        {
+            Jump = false;
+        }
 
         /*// 액션 인풋 처리 샘플
         private void Move_Performed(InputAction.CallbackContext context)
