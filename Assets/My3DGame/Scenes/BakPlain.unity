@@ -480,6 +480,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4960498190456020535, guid: 93d25e66cc11d26428eec98a04247007, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1528346486}
+    - targetCorrespondingSourceObject: {fileID: 4960498190456020535, guid: 93d25e66cc11d26428eec98a04247007, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1528346490}
     - targetCorrespondingSourceObject: {fileID: 7696229166439208697, guid: 93d25e66cc11d26428eec98a04247007, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1998235692}
@@ -1015,6 +1018,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerControllInputBlocked: 0
+--- !u!114 &1528346490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1528346485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0d9183fa93ecd64586ddba109bd3933, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxForwardSpeed: 8
+  minTurnSpeed: 400
+  maxTurnSpeed: 1200
+  idleTimeout: 5
 --- !u!1001 &1983130108
 PrefabInstance:
   m_ObjectHideFlags: 0
