@@ -1,4 +1,5 @@
 using UnityEngine;
+using Unity.Cinemachine;
 
 namespace My3DGame
 {
@@ -12,6 +13,8 @@ namespace My3DGame
         protected PlayerInput m_Input;
         protected CharacterController m_CharCtrl;
         protected Animator m_Animator;
+        protected CameraSettings m_CameraSettings;
+        protected CinemachineOrbitalFollow m_OrbitalFollow;
 
         // 애니메이션 상태와 관련 변수
         protected AnimatorStateInfo m_CurrentStateInfo;
@@ -60,7 +63,7 @@ namespace My3DGame
         readonly int m_HashAngleDeltaRad = Animator.StringToHash("AngleDeltaRad");
         readonly int m_HashInputDetected = Animator.StringToHash("InputDetected");
         readonly int m_HashGrounded = Animator.StringToHash("Grounded");
-        readonly int m_HashTimeOutToIdle = Animator.StringToHash("TimeOutToIdle");
+        readonly int m_HashTimeOutToIdle = Animator.StringToHash("TimeoutToIdle");
 
         // 애니메이션 상태 Hash
         readonly int m_HashLocomotion = Animator.StringToHash("Locomotion");
@@ -89,6 +92,9 @@ namespace My3DGame
             m_Input = GetComponent<PlayerInput>();
             m_CharCtrl = GetComponent<CharacterController>();
             m_Animator = GetComponent<Animator>();
+
+            m_CameraSettings = FindFirstObjectByType<CameraSettings>();
+            m_OrbitalFollow = m_CameraSettings.freeLookCamera.GetComponent<CinemachineOrbitalFollow>();
         }
 
         private void FixedUpdate()
@@ -169,14 +175,14 @@ namespace My3DGame
 
             // 현재 상태 저장
             m_CurrentStateInfo = m_Animator.GetCurrentAnimatorStateInfo(0);
-            m_NextStateInfo = m_Animator.GetCurrentAnimatorStateInfo(0);
+            m_NextStateInfo = m_Animator.GetNextAnimatorStateInfo(0);
             m_IsAnimatorTransitioning = m_Animator.IsInTransition(0);
         }
 
-        // 애니메이션 상태(tag string)에 따른 인풋 처리
+        // 애니메이션 상태(tag string)에 따른 인풋 체크
         private void UpdateInputBlocking()
         {
-            bool inputBlocked = m_CurrentStateInfo.tagHash == m_HashBlockInput && m_IsAnimatorTransitioning;
+            bool inputBlocked = m_CurrentStateInfo.tagHash == m_HashBlockInput && !m_IsAnimatorTransitioning;
             inputBlocked |= m_NextStateInfo.tagHash == m_HashBlockInput;
             m_Input.playerControllInputBlocked = inputBlocked;
         }
@@ -252,9 +258,10 @@ namespace My3DGame
             // 입력에 따른 방향
             Vector3 localMovementDirection = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
 
-            // 입력 방향을 바라보는 앞 방향 구하기
-            Vector3 forward = Quaternion.Euler(localMovementDirection.x, localMovementDirection.y,
-                localMovementDirection.z) * Vector3.forward;
+            // 카메라가 바라보는 앞 방향 구하기
+            Vector3 forward = Quaternion.Euler(0f, m_OrbitalFollow.HorizontalAxis.Value,
+                0f) * Vector3.forward;
+
             forward.y = 0f;
             forward.Normalize();
 

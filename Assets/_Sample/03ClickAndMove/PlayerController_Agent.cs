@@ -25,18 +25,7 @@ namespace MySample
         protected bool m_PreviousIsAnimatorTransitioning;
 
         // 이동
-        public float maxForwardSpeed = 8f;
-        public float minTurnSpeed = 400f;           // 회전 최솟값
-        public float maxTurnSpeed = 1200f;          // 회전 최댓값
-
         protected bool m_IsGrounded = true;
-        protected float m_DesiredForwardSpeed;
-        protected float m_ForwardSpeed;
-        protected float m_VerticalSpeed;
-
-        // 회전
-        protected Quaternion m_TargetRotation;      // 인풋에 따른 목표 회전값
-        protected float m_AngleDiff;                // 현재 앞 방향의 각과 목표 방향의 각의 차이
 
         // 대기
         public float idleTimeout = 5f;              // 5초 타임 아웃
@@ -44,21 +33,17 @@ namespace MySample
         protected float m_IdleTimer;                // 카운트 다운
 
         // 점프
-        public float gravity = 20f;                 // 중력값
-        public float jumpSpeed = 10f;               // 점프키를 눌렀을 때 적용되는 스피드 값
-        protected bool m_ReadyToJump = false;       // 점프 대기 중 체크
 
         // 마우스 클릭
         public LayerMask groundLayerMask;
+        public GameObject clickEffectPrefab;        // 그라운드 마우스 클릭 시 바닥에 나타나는 이펙트 효과
 
-        // 상수 정의
-        const float k_GroundAcceleration = 20f;             // 이동 시 가속도 값
-        const float k_GroundDeceleration = 25f;             // 이동 시 감속도 값
-        const float k_GroundedRayDistance = 1f;             // 바닥으로부터 레이를 쏘는 높이
-        const float k_AirbornedTurnSpeedProportion = 5.4f;
-        const float k_InverseOneEighty = 1f / 100f;
-        const float k_StickingGravityProportion = 0.3f;     // 바닥에 있을 때 중력 적용 계수
-        const float k_JumpAbortSpeed = 10f;                 // 점프 키를 떼면 아래로 내려가는 속도를 가속
+        protected Transform target;
+        protected bool isArrive = false;            // 도착 판정
+
+        // 2초 간격 공격하기
+        [SerializeField] protected float attackDelay = 2f;
+        protected float attackCountdown = 0f;
 
         // 애니메이션 Parameters Hash
         readonly int m_HashForwardSpeed = Animator.StringToHash("ForwardSpeed");
@@ -66,7 +51,8 @@ namespace MySample
         readonly int m_HashAngleDeltaRad = Animator.StringToHash("AngleDeltaRad");
         readonly int m_HashInputDetected = Animator.StringToHash("InputDetected");
         readonly int m_HashGrounded = Animator.StringToHash("Grounded");
-        readonly int m_HashTimeOutToIdle = Animator.StringToHash("TimeOutToIdle");
+        readonly int m_HashTimeOutToIdle = Animator.StringToHash("TimeoutToIdle");
+        readonly int m_HashMeleeAttack = Animator.StringToHash("MeleeAttack");
 
         // 애니메이션 상태 Hash
         readonly int m_HashLocomotion = Animator.StringToHash("Locomotion");
@@ -114,6 +100,9 @@ namespace MySample
 
             // 이동
             CalculateForwardMovement();
+
+            // 공격
+            UpdateAttack();
             
             // 대기 상태 처리
             TimeoutToIdle();
@@ -137,7 +126,7 @@ namespace MySample
             }
 
             // 그라운드 체크
-            m_IsGrounded = m_CharCtrl.isGrounded;
+            m_IsGrounded = true;
 
             // 애니메이션 적용
             m_Animator.SetBool(m_HashGrounded, m_IsGrounded);
@@ -155,14 +144,14 @@ namespace MySample
 
             // 현재 상태 저장
             m_CurrentStateInfo = m_Animator.GetCurrentAnimatorStateInfo(0);
-            m_NextStateInfo = m_Animator.GetCurrentAnimatorStateInfo(0);
+            m_NextStateInfo = m_Animator.GetNextAnimatorStateInfo(0);
             m_IsAnimatorTransitioning = m_Animator.IsInTransition(0);
         }
 
         // 애니메이션 상태(tag string)에 따른 인풋 처리
         private void UpdateInputBlocking()
         {
-            bool inputBlocked = m_CurrentStateInfo.tagHash == m_HashBlockInput && m_IsAnimatorTransitioning;
+            bool inputBlocked = m_CurrentStateInfo.tagHash == m_HashBlockInput && !m_IsAnimatorTransitioning;
             inputBlocked |= m_NextStateInfo.tagHash == m_HashBlockInput;
             m_Input.playerControllInputBlocked = inputBlocked;
         }
@@ -170,27 +159,89 @@ namespace MySample
         // 앞으로 이동
         private void CalculateForwardMovement()
         {
-            if(m_Input.MouseClick)
+            if (isArrive)
+            {
+                m_Agent.SetDestination(transform.position);
+            }
+            else
+            {
+                // Enemy일 경우 이동 대비
+                if (target && isArrive == false)
+                {
+                    m_Agent.SetDestination(target.position);
+                }
+
+                // 도착 판정
+                if (m_Agent.remainingDistance <= m_Agent.stoppingDistance)
+                {
+                    isArrive = true;
+                    attackCountdown = attackDelay;
+                }
+            }
+
+            if (m_Input.MouseClick)
             {
                 // 마우스 클릭 좌표 구하기
                 Ray ray = m_Camera.ScreenPointToRay(m_Input.MousePosition);
                 RaycastHit hit;
                 if(Physics.Raycast(ray, out hit, 100f, groundLayerMask))
                 {
-                    m_Agent.SetDestination(hit.point);
+                    if(hit.transform.tag == "Ground")
+                    {
+                        m_Agent.SetDestination(hit.point);
+                        m_Agent.stoppingDistance = 0f;
 
-                    // 클릭한 지점에 이펙트 효과
+                        // 클릭한 지점에 이펙트 효과
+                        if (clickEffectPrefab)
+                        {
+                            Vector3 effectPosition = hit.point + new Vector3(0f, 0.05f, 0f);
+                            GameObject effectGo = Instantiate(clickEffectPrefab, effectPosition, clickEffectPrefab.transform.rotation);
+                            Destroy(effectGo, 2f);
+                        }
+
+                        target = null;
+                    }
+                    else if(hit.transform.tag == "Enemy")
+                    {
+                        target = hit.transform;
+                        m_Agent.SetDestination(target.position);
+                        m_Agent.stoppingDistance = 1.5f;
+                    }
+
+                    isArrive = false;
                 }
-
 
                 //
                 m_Input.MouseClick = false;
+
             }
 
             // 애니메이터 파라미터 설정
             m_Animator.SetFloat(m_HashForwardSpeed, m_Agent.velocity.magnitude);
+
         }
-        
+
+        // 공격
+        private void UpdateAttack()
+        {
+            if (target == null)
+                return;
+
+            if(isArrive)
+            {
+                // 공격 - 2초 간격으로 공격
+                attackCountdown += Time.deltaTime;
+                if(attackCountdown >= attackDelay)
+                {
+                    // 공격
+                    m_Animator.SetTrigger(m_HashMeleeAttack);
+
+                    // 초기화
+                    attackCountdown = 0f;
+                }
+            }
+        }
+
         // 대기 상태 처리
         private void TimeoutToIdle()
         {

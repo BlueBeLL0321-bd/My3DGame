@@ -66,7 +66,7 @@ namespace MySample
         private void OnEnable()
         {
             // Action Map 활성화
-            inputActions.Player.Enable();
+            inputActions.PlayerAgent.Enable();
 
             // 이벤트 발생 시 호출되는 함수 등록
             moveClickAction.started += MoveClick_Started;
@@ -75,7 +75,7 @@ namespace MySample
         private void OnDisable()
         {
             // Action Map 비활성화
-            inputActions.Player.Disable();
+            inputActions.PlayerAgent.Disable();
 
             // 이벤트 발생 시 호출되는 함수 해제
             moveClickAction.started += MoveClick_Started;
