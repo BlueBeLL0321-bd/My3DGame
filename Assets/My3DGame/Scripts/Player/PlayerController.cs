@@ -1,12 +1,13 @@
 using UnityEngine;
 using Unity.Cinemachine;
+using My3DGame.Util;
 
 namespace My3DGame
 {
     /// <summary>
     /// 플레이어 액션을 관리하는 클래스(대기, 이동, 점프)
     /// </summary>
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : MonoBehaviour, IMessageReceiver
     {
         #region Variables
         // 참조
@@ -15,6 +16,8 @@ namespace My3DGame
         protected Animator m_Animator;
         protected CameraSettings m_CameraSettings;
         protected CinemachineOrbitalFollow m_OrbitalFollow;
+
+        protected Damageable m_Damageable;
 
         // 애니메이션 상태와 관련 변수
         protected AnimatorStateInfo m_CurrentStateInfo;
@@ -65,6 +68,11 @@ namespace My3DGame
         readonly int m_HashGrounded = Animator.StringToHash("Grounded");
         readonly int m_HashTimeOutToIdle = Animator.StringToHash("TimeoutToIdle");
 
+        readonly int m_HashHurtFromX = Animator.StringToHash("HurtFromX");
+        readonly int m_HashHurtFromY = Animator.StringToHash("HurtFromY");
+        readonly int m_HashHurt = Animator.StringToHash("Hurt");
+        readonly int m_HashDeath = Animator.StringToHash("Death");
+
         // 애니메이션 상태 Hash
         readonly int m_HashLocomotion = Animator.StringToHash("Locomotion");
         readonly int m_HashAirborne = Animator.StringToHash("Airborne");
@@ -95,6 +103,21 @@ namespace My3DGame
 
             m_CameraSettings = FindFirstObjectByType<CameraSettings>();
             m_OrbitalFollow = m_CameraSettings.freeLookCamera.GetComponent<CinemachineOrbitalFollow>();
+
+            m_Damageable = GetComponent<Damageable>();
+        }
+
+        private void OnEnable()
+        {
+            // 대미지 메시지 리시버 추가
+            m_Damageable.onDamageMessageReceivers.Add(this);
+            m_Damageable.IsInvulnerable = true;
+        }
+
+        private void OnDisable()
+        {
+            // 대미지 메시지 리시버 제거
+            m_Damageable.onDamageMessageReceivers.Remove(this);
         }
 
         private void FixedUpdate()
@@ -354,6 +377,50 @@ namespace My3DGame
 
             // 애니메이션 파라미터 설정
             m_Animator.SetBool(m_HashInputDetected, inputDetected);
+        }
+
+        // 대미지 처리
+        public void OnReceiveMessage(MessageType type, object sender, object msg)
+        {
+            switch (type)
+            {
+                case MessageType.DAMAGED:
+                    {
+                        Damageable.DamageMessage damageData = (Damageable.DamageMessage)msg;
+                        Damaged(damageData);
+                    }
+                    break;
+                case MessageType.DEAD:
+                    {
+                        Damageable.DamageMessage damageData = (Damageable.DamageMessage)msg;
+                        Die(damageData);
+                    }
+                    break;
+                case MessageType.RESPAWN:
+                    break;
+            }
+        }
+
+        private void Damaged(Damageable.DamageMessage damageMessage)
+        {
+            // TODO
+            // 애니메이션
+            m_Animator.SetTrigger(m_HashHurt);
+
+            // 대미지 방향 구하기
+            Vector3 forward = damageMessage.damageSource - transform.position;
+            forward.y = 0f;
+
+            Vector3 localHurt = transform.InverseTransformDirection(forward);
+            m_Animator.SetFloat(m_HashHurtFromX, localHurt.x);
+            m_Animator.SetFloat(m_HashHurtFromY, localHurt.z);
+
+            // Vfx, Sfx
+        }
+
+        private void Die(Damageable.DamageMessage damageMessage)
+        {
+            // TODO
         }
         #endregion
     }

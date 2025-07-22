@@ -12,6 +12,12 @@ namespace My3DGame.AI
         #region Variables
         private Animator m_Animator;
 
+        // 패트롤
+        private bool m_IsPatrol = false;
+        private float m_MinTime = 0f;
+        private float m_MaxTime = 3f;
+        private float m_IdleTime = 0f;
+
         // 애니메이션 파라미터
         readonly int m_HashForwardSpeed = Animator.StringToHash("ForwardSpeed");
         #endregion
@@ -28,6 +34,13 @@ namespace My3DGame.AI
         {
             // 애니메이터 상태 변경
             m_Animator.SetFloat(m_HashForwardSpeed, 0f);
+
+            // 패트롤 체크
+            if(enemy is EnemyPatrol)
+            {
+                m_IsPatrol = true;
+                m_IdleTime = Random.Range(m_MinTime, m_MaxTime);
+            }    
         }
 
         public override void OnUpdate(float deltaTime)
@@ -39,15 +52,26 @@ namespace My3DGame.AI
                 // 공격 가능 여부 체크
                 if(enemy.IsAttackable)
                 {
-                    stateMachine.ChangeState(new AttackState());
+                    if(stateMachine.ElapseTime >= enemy.AttackDelay)
+                    {
+                        stateMachine.ChangeState(new AttackState());
+                    }
                 }
                 else
                 {
                     stateMachine.ChangeState(new WalkState());
                 }
             }
+            else if(m_IsPatrol)
+            {
+                if(stateMachine.ElapseTime >= m_IdleTime)
+                {
+                    stateMachine.ChangeState(new PatrolState());
+                }
+            }
         }
 
+        // 상태 나가기
         public override void OnExit()
         {
             

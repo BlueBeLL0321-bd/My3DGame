@@ -43,13 +43,14 @@ namespace My3DGame.AI
                 else
                 {
                     m_Agent.SetDestination(enemy.Target.position);
+
+                    // 애니메이션 변경
+                    m_Animator.SetFloat(m_HashForwardSpeed, m_Agent.velocity.magnitude);
                 }
             }
-
-            // 애니메이션 변경
-            if(enemy.IsAttackable == false)
+            else
             {
-                m_Animator.SetFloat(m_HashForwardSpeed, m_Agent.velocity.magnitude);
+                stateMachine.ChangeState(new IdleState());
             }
         }
 

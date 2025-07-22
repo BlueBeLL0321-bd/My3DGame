@@ -1,5 +1,5 @@
+using My3DGame.Util;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace My3DGame.AI
 {
@@ -8,12 +8,12 @@ namespace My3DGame.AI
     /// 속성 : 상태 머신, 공격 범위
     /// 기능 : 공격 가능 여부 체크, 상태 변경, 타깃을 바라본다
     /// </summary>
-    public class Enemy : MonoBehaviour
+    public class Enemy : MonoBehaviour, IMessageReceiver
     {
         #region Variables
         // 참조
-        private NavMeshAgent m_Agent;
-        private DetectionModule m_DetectionModule;
+        protected DetectionModule m_DetectionModule;
+        protected Damageable m_Damageable;
 
         // 상태를 관리하는 상태 머신
         protected StateMachine stateMachine;
@@ -21,10 +21,6 @@ namespace My3DGame.AI
         // 공격 가능 범위
         [SerializeField]
         private float attackRange = 2.0f;
-
-        // 공격 지연 시간
-        [SerializeField]
-        private float attackDelay = 2.0f;
 
         // 회전 속도
         private float rotateSpeed = 5f;
@@ -47,7 +43,7 @@ namespace My3DGame.AI
                 if(Target)
                 {
                     float distance = Vector3.Distance(transform.position, Target.position);
-                    return (distance <= attackRange);
+                    return (distance <= AttackRange);
                 }
                 else
                 {
@@ -62,6 +58,20 @@ namespace My3DGame.AI
         {
             // 참조
             m_DetectionModule = this.GetComponent<DetectionModule>();
+            m_Damageable = this.GetComponent<Damageable>();
+        }
+
+        protected virtual void OnEnable()
+        {
+            // 대미지 메시지 리시버 추가
+            m_Damageable.onDamageMessageReceivers.Add(this);
+            m_Damageable.IsInvulnerable = true;
+        }
+
+        protected virtual void OnDisable()
+        {
+            // 대미지 메시지 리시버 제거
+            m_Damageable.onDamageMessageReceivers.Remove(this);
         }
 
         protected virtual void Start()
@@ -103,6 +113,36 @@ namespace My3DGame.AI
             Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0f, direction.z));
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, 
                 Time.deltaTime * rotateSpeed);
+        }
+
+        // 대미지 처리
+        public void OnReceiveMessage(MessageType type, object sender, object msg)
+        {
+            switch(type)
+            {
+                case MessageType.DAMAGED:
+                    {
+                        Damageable.DamageMessage damageData = (Damageable.DamageMessage)msg;
+                        Damaged(damageData);
+                    }
+                    break;
+                case MessageType.DEAD:
+                    {
+                        Damageable.DamageMessage damageData = (Damageable.DamageMessage)msg;
+                        Die(damageData);
+                    }
+                    break;
+            }
+        }
+
+        private void Damaged(Damageable.DamageMessage damageMessage)
+        {
+            // TODO
+        }
+
+        private void Die(Damageable.DamageMessage damageMessage)
+        {
+            // TODO
         }
         #endregion
     }
