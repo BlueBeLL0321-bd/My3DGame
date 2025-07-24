@@ -9,7 +9,7 @@ namespace My3DGame.AI
         private Animator m_Animator;
         
         // 애니메이션 파라미터
-        readonly int m_HashIsDeath = Animator.StringToHash("IsDeath");
+        readonly int m_HashDeath = Animator.StringToHash("Death");
         #endregion
 
         // 상태 초기화, 초기값 설정
@@ -22,7 +22,7 @@ namespace My3DGame.AI
         // 죽음 상태
         public override void OnEnter()
         {
-            m_Animator.SetBool(m_HashIsDeath, true);
+            m_Animator.SetTrigger(m_HashDeath);
         }
 
         public override void OnUpdate(float deltaTime)

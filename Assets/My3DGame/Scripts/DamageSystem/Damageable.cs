@@ -81,6 +81,8 @@ namespace My3DGame
         // 대미지 입기
         public void TakeDamage(DamageMessage data)
         {
+            Debug.Log("TakeDamage() 호출됨");
+
             // 체력 체크
             if (CurrentHealth <= 0f)
                 return;
@@ -119,7 +121,7 @@ namespace My3DGame
             for (int i = 0; i < onDamageMessageReceivers.Count; i++)
             {
                 var receiver = onDamageMessageReceivers[i] as IMessageReceiver;
-                receiver.OnReceiveMessage(messageType, this, data);
+                receiver?.OnReceiveMessage(messageType, this, data);
             }
         }
         #endregion

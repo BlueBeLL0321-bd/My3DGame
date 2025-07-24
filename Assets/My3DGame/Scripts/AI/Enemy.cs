@@ -22,6 +22,10 @@ namespace My3DGame.AI
         [SerializeField]
         private float attackRange = 2.0f;
 
+        // 공격 대미지 값
+        [SerializeField]
+        private float attackDamage = 20f;
+
         // 회전 속도
         private float rotateSpeed = 5f;
         #endregion
@@ -143,6 +147,34 @@ namespace My3DGame.AI
         private void Die(Damageable.DamageMessage damageMessage)
         {
             // TODO
+            stateMachine.ChangeState(new DeathState());
+
+            // 오브젝트 킬
+            Destroy(gameObject, 2f);
+        }
+
+        // 공격 애니메이션 프레임에서 자동으로 대미지 준다
+        public void CheckDamage()
+        {
+            if (Target == null)
+                return;
+
+            Damageable damageable = Target.GetComponent<Damageable>();
+
+            if(damageable)
+            {
+                // 대미지 데이터 구성
+                Damageable.DamageMessage data;
+
+                data.amount = attackDamage;
+                data.damager = this;
+                data.direction = Vector3.zero;
+                data.damageSource = Vector3.zero;
+                data.throwing = false;
+                data.stopCamera = false;
+
+                damageable.TakeDamage(data);
+            }
         }
         #endregion
     }

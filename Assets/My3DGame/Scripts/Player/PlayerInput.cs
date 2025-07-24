@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 namespace My3DGame
 {
@@ -14,6 +15,7 @@ namespace My3DGame
         // input Action
         protected InputAction moveAction;
         protected InputAction jumpAction;
+        protected InputAction attackAction;
 
         // 인풋 제어 처리
         [HideInInspector]
@@ -24,6 +26,10 @@ namespace My3DGame
         protected Vector2 m_Movement;
         // 점프
         protected bool m_Jump;
+        // 공격
+        protected bool m_Attack;
+
+        protected Coroutine m_AttackWaitCoroutine;
         #endregion
 
         #region Property
@@ -55,6 +61,19 @@ namespace My3DGame
                 m_Jump = value;
             }
         }
+
+        // 공격
+        public bool Attack
+        {
+            get
+            {
+                return m_Attack && !playerControllInputBlocked && !m_ExternalInputBlocked;
+            }
+            set
+            {
+                m_Attack = value;
+            }
+        }
         #endregion
 
         #region Unity Event Method
@@ -64,6 +83,7 @@ namespace My3DGame
             inputActions = new InputSystem_Actions();
             moveAction = inputActions.Player.Move;
             jumpAction = inputActions.Player.Jump;
+            attackAction = inputActions.Player.Attack;
         }
 
         private void OnEnable()
@@ -74,6 +94,8 @@ namespace My3DGame
             // 이벤트 발생 시 호출되는 함수 등록
             jumpAction.started += Jump_Started;
             jumpAction.canceled += Jump_Canceled;
+
+            attackAction.started += Attack_Started;
 
             /*// 액션 인풋 처리 샘플 - 이벤트 발생 시 호출되는 함수 등록
             moveAction.performed += Move_Performed;
@@ -89,6 +111,8 @@ namespace My3DGame
             // 이벤트 발생 시 호출되는 함수 해제
             jumpAction.started -= Jump_Started;
             jumpAction.canceled -= Jump_Canceled;
+
+            attackAction.started -= Attack_Started;
 
             /*// 액션 인풋 처리 샘플 - 이벤트 발생 시 호출되는 함수 해제
             moveAction.performed -= Move_Performed;
@@ -129,6 +153,22 @@ namespace My3DGame
         private void Jump_Canceled(InputAction.CallbackContext context)
         {
             Jump = false;
+        }
+
+        private void Attack_Started(InputAction.CallbackContext context)
+        {
+            Attack = true;
+
+            if (m_AttackWaitCoroutine != null)
+                StopCoroutine(m_AttackWaitCoroutine);       // 지정된 코루틴 함수만 정지시킨다
+
+            m_AttackWaitCoroutine = StartCoroutine(AttackWait());
+        }
+
+        IEnumerator AttackWait()
+        {
+            yield return new WaitForSeconds(0.03f);
+            Attack = false;
         }
 
         /*// 액션 인풋 처리 샘플

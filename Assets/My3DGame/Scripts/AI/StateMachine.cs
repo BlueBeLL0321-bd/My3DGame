@@ -42,8 +42,6 @@ namespace My3DGame.AI
             m_CurrentState = initialState;
             m_CurrentState.OnEnter();
             m_ElapseTime = 0f;
-
-            Debug.Log($"{m_CurrentState} 상태로 처음 시작");
         }
 
         // 상태 머신에 상태를 등록
@@ -90,8 +88,6 @@ namespace My3DGame.AI
             // 3. 새로운 현재 상태에 들어가기
             m_CurrentState.OnEnter();
             m_ElapseTime = 0f;
-
-            Debug.Log($"{m_CurrentState} 상태로 변경");
 
             return m_CurrentState;
         }

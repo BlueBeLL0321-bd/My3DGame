@@ -14,6 +14,7 @@ namespace My3DGame
         protected PlayerInput m_Input;
         protected CharacterController m_CharCtrl;
         protected Animator m_Animator;
+
         protected CameraSettings m_CameraSettings;
         protected CinemachineOrbitalFollow m_OrbitalFollow;
 
@@ -51,12 +52,16 @@ namespace My3DGame
         public float jumpSpeed = 10f;               // 점프키를 눌렀을 때 적용되는 스피드 값
         protected bool m_ReadyToJump = false;       // 점프 대기 중 체크
 
+        // 공격
+        public MeleeWeapon meleeWeapon;
+        private bool m_InAttack;                    // 공격 중이냐
+
         // 상수 정의
         const float k_GroundAcceleration = 20f;             // 이동 시 가속도 값
         const float k_GroundDeceleration = 25f;             // 이동 시 감속도 값
         const float k_GroundedRayDistance = 1f;             // 바닥으로부터 레이를 쏘는 높이
         const float k_AirbornedTurnSpeedProportion = 5.4f;
-        const float k_InverseOneEighty = 1f / 100f;
+        const float k_InverseOneEighty = 1f / 180f;
         const float k_StickingGravityProportion = 0.3f;     // 바닥에 있을 때 중력 적용 계수
         const float k_JumpAbortSpeed = 10f;                 // 점프 키를 떼면 아래로 내려가는 속도를 가속
 
@@ -67,6 +72,9 @@ namespace My3DGame
         readonly int m_HashInputDetected = Animator.StringToHash("InputDetected");
         readonly int m_HashGrounded = Animator.StringToHash("Grounded");
         readonly int m_HashTimeOutToIdle = Animator.StringToHash("TimeoutToIdle");
+
+        readonly int m_HashMeleeAttack = Animator.StringToHash("MeleeAttack");
+        readonly int m_HashStateTime = Animator.StringToHash("StateTime");
 
         readonly int m_HashHurtFromX = Animator.StringToHash("HurtFromX");
         readonly int m_HashHurtFromY = Animator.StringToHash("HurtFromY");
@@ -109,21 +117,38 @@ namespace My3DGame
 
         private void OnEnable()
         {
-            // 대미지 메시지 리시버 추가
+            // 대미지 메시지 리시버 리스트에 추가
             m_Damageable.onDamageMessageReceivers.Add(this);
             m_Damageable.IsInvulnerable = true;
         }
 
         private void OnDisable()
         {
-            // 대미지 메시지 리시버 제거
+            // 대미지 메시지 리시버 리스트에 제거
             m_Damageable.onDamageMessageReceivers.Remove(this);
+        }
+
+        private void Start()
+        {
+            // 초기화
+            m_InAttack = false;
+            meleeWeapon.SetOwner(this.gameObject);
         }
 
         private void FixedUpdate()
         {
+            // 애니메이션
             CacheAnimatorState();       // 애니메이션 상태값 읽어 오기
             UpdateInputBlocking();      // 애니메이션 상태에 따른 인풋 처리
+
+            // 공격
+            m_Animator.ResetTrigger(m_HashMeleeAttack);
+            m_Animator.SetFloat(m_HashStateTime,
+                Mathf.Repeat(m_Animator.GetCurrentAnimatorStateInfo(0).normalizedTime, 1f));
+            if(m_Input.Attack)
+            {
+                m_Animator.SetTrigger(m_HashMeleeAttack);
+            }
 
             // 이동
             CalculateForwardMovement();
@@ -326,7 +351,7 @@ namespace My3DGame
             bool updateOrientationForLanding = !m_IsAnimatorTransitioning && m_CurrentStateInfo.shortNameHash == m_HashLanding
                 || m_NextStateInfo.shortNameHash == m_HashLanding;
 
-            return updateOrientationForLocomotion || updateOrientationForAirborne || updateOrientationForLanding;
+            return updateOrientationForLocomotion || updateOrientationForAirborne || updateOrientationForLanding || !m_InAttack;
         }
 
         // 회전값 적용
@@ -354,7 +379,7 @@ namespace My3DGame
         private void TimeoutToIdle()
         {
             // 입력값 체크 - 이동, 
-            bool inputDetected = IsMoveInput || m_Input.Jump;
+            bool inputDetected = IsMoveInput || m_Input.Jump || m_Input.Attack;
 
             if(m_IsGrounded && !inputDetected)
             {
@@ -379,6 +404,19 @@ namespace My3DGame
             m_Animator.SetBool(m_HashInputDetected, inputDetected);
         }
 
+        // 공격
+        public void MeleeAttackStart()
+        {
+            m_InAttack = true;
+            meleeWeapon.BeginAttack(false);
+        }
+
+        public void MeleeAttackEnd()
+        {
+            m_InAttack = false;
+            meleeWeapon.EndAttack();
+        }
+
         // 대미지 처리
         public void OnReceiveMessage(MessageType type, object sender, object msg)
         {
@@ -387,12 +425,14 @@ namespace My3DGame
                 case MessageType.DAMAGED:
                     {
                         Damageable.DamageMessage damageData = (Damageable.DamageMessage)msg;
+                        Debug.Log($"MessageType.DAMAGED : {damageData.amount}");
                         Damaged(damageData);
                     }
                     break;
                 case MessageType.DEAD:
                     {
                         Damageable.DamageMessage damageData = (Damageable.DamageMessage)msg;
+                        Debug.Log($"MessageType.DEAD : {damageData.amount}");
                         Die(damageData);
                     }
                     break;
@@ -421,6 +461,8 @@ namespace My3DGame
         private void Die(Damageable.DamageMessage damageMessage)
         {
             // TODO
+            m_Animator.SetTrigger(m_HashDeath);
+            m_Damageable.IsInvulnerable = true;
         }
         #endregion
     }
