@@ -19,19 +19,27 @@ MonoBehaviour:
         name: 
         buffs: []
       amount: 0
-      allowedItems: 
+      allowedItems: 00000000
     - item:
         id: -1
         name: 
         buffs: []
       amount: 0
-      allowedItems: 
+      allowedItems: 07000000
     - item:
-        id: -1
-        name: 
-        buffs: []
-      amount: 0
-      allowedItems: 
+        id: 2
+        name: ItemC
+        buffs:
+        - stat: 2
+          value: 6
+          min: 6
+          max: 9
+        - stat: 1
+          value: 7
+          min: 7
+          max: 10
+      amount: 1
+      allowedItems: 03000000
   database: {fileID: 11400000, guid: 4dae3ac0526c71e428939ef8bb47a53f, type: 2}
   type: 1
   savePath: /Equipment.json

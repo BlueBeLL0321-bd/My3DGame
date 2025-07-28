@@ -12,6 +12,8 @@ namespace My3DGame.ItemSystem
         public ItemType type;               // 아이템 타입
         public bool stackable;              // 인벤 저장 시 하나의 슬롯에 다수를 누적 저장 가능 여부
 
+        public int shopPrice;               // 유저가 상점에서 구매하는 금액
+
         public Sprite icon;                 // 아이템 아이콘 이미지
         public GameObject modelPrefab;      // 장비 아이템 모델 오브젝트
 

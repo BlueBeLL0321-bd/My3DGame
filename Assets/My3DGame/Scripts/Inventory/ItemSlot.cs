@@ -73,7 +73,7 @@ namespace My3DGame.InventorySystem
             OnPostUpdate?.Invoke(this);
         }
 
-        // 슬롯의 아이템 제거
+        // 슬롯의 아이템 제거하기
         public void RemoveItem()
         {
             UpdateSlot(new Item(), 0);

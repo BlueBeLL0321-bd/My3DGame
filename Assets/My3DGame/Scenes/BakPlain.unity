@@ -582,7 +582,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemDataBase: {fileID: 11400000, guid: 4dae3ac0526c71e428939ef8bb47a53f, type: 2}
   inventoryObject: {fileID: 11400000, guid: 9a4be026f48619743b2c869ce26c4c40, type: 2}
-  index: 2
+  playerInventoryUI: {fileID: 1549939503}
+  playerEquipmentUI: {fileID: 882195977}
+  index: 0
 --- !u!1 &132750182
 GameObject:
   m_ObjectHideFlags: 0
@@ -665,7 +667,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 132750185}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1549939503}
+        m_TargetAssemblyTypeName: My3DGame.InventorySystem.DynamicInventoryUI, Assembly-CSharp
+        m_MethodName: UseItem
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &132750185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1242,6 +1256,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: {fileID: 15785053}
   itemDescription: {fileID: 589333904}
+  equipButton: {fileID: 655187890}
+  useButton: {fileID: 132750182}
+  sellButton: {fileID: 2068383072}
+  unequipButton: {fileID: 2080702726}
 --- !u!1 &495726646 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 536973352946925327, guid: 8aea02e6ff919184baea826e35d67d81, type: 3}
@@ -2533,7 +2551,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 655187893}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1549939503}
+        m_TargetAssemblyTypeName: My3DGame.InventorySystem.DynamicInventoryUI, Assembly-CSharp
+        m_MethodName: EquipItem
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &655187893
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3117,7 +3147,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 912368215}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 882195977}
+        m_TargetAssemblyTypeName: My3DGame.InventorySystem.StaticInventoryUI, Assembly-CSharp
+        m_MethodName: UnequipAll
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &912368215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5909,7 +5951,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2068383075}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1549939503}
+        m_TargetAssemblyTypeName: My3DGame.InventorySystem.DynamicInventoryUI, Assembly-CSharp
+        m_MethodName: SellItem
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2068383075
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6135,7 +6189,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2080702729}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 882195977}
+        m_TargetAssemblyTypeName: My3DGame.InventorySystem.StaticInventoryUI, Assembly-CSharp
+        m_MethodName: Unequip
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2080702729
 MonoBehaviour:
   m_ObjectHideFlags: 0

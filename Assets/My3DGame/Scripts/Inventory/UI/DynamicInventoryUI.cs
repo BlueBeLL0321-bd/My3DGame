@@ -44,15 +44,59 @@ namespace My3DGame.InventorySystem
         {
             base.UpdateSelectSlot(go);
 
-            if(selectSlotObject == null)
+            if (selectSlotObject == null)
             {
                 itemInfoUI.gameObject.SetActive(false);
             }
             else
             {
                 itemInfoUI.gameObject.SetActive(true);
-                itemInfoUI.SetItemInfoUI(slotUIs[selectSlotObject]);
+                itemInfoUI.SetItemInfoUI(slotUIs[selectSlotObject], false);
             }
+        }
+
+        // 아이템 장착
+        public void EquipItem()
+        {
+            // Debug.Log("선택된 아이템 장착");
+            if (selectSlotObject == null)
+                return;
+
+            Debug.Log("선택된 아이템이 장착된 슬롯의 인덱스를 가져온다");
+            Debug.Log("선택된 아이템과 현재 장착될 슬롯의 인덱스에 있는 아이템을 Swap");
+        }
+
+        // 아이템 사용
+        public void UseItem()
+        {
+            // Debug.Log("선택된 아이템 사용");
+            // 선택 아이템 체크
+            if (selectSlotObject == null)
+                return;
+
+            // 소모품 아이템 사용
+            inventoryObject.UseItem(slotUIs[selectSlotObject]);
+
+            // 선택된 아이템 해제
+            UpdateSelectSlot(null);
+        }
+
+        // 아이템 판매(버리기)
+        public void SellItem()
+        {
+            // Debug.Log("선택된 아이템 판매");
+            // 선택 아이템 저장
+            if (selectSlotObject == null)
+                return;
+
+            // 상점 판매 대금의 반값을 받는다
+            int sellPrice = slotUIs[selectSlotObject].ItemObject.shopPrice / 2;
+            Debug.Log($"{sellPrice} 골드를 보상 받고 버린다");
+
+            // 슬롯에서 아이템 제거
+            slotUIs[selectSlotObject].AddAmount(-1);
+            // 선택 해제
+
         }
         #endregion
     }
