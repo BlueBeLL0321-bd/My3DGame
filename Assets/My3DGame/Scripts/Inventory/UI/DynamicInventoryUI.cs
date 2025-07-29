@@ -10,10 +10,10 @@ namespace My3DGame.InventorySystem
     public class DynamicInventoryUI : InventoryUI
     {
         #region Variables
-        public GameObject slotPrefab;       // 슬롯 UI 프리팹
-        public Transform slotsParent;       // 생성 시 지정되는 부모 오브젝트
+        public GameObject slotPrefab;               // 슬롯 UI 프리팹
+        public Transform slotsParent;               // 생성 시 지정되는 부모 오브젝트
 
-
+        public InventorySO equipmentInventory;      // 장착 인벤토리
         #endregion
 
         #region Custom Method
@@ -58,12 +58,16 @@ namespace My3DGame.InventorySystem
         // 아이템 장착
         public void EquipItem()
         {
-            // Debug.Log("선택된 아이템 장착");
+            Debug.Log("선택된 아이템 장착");
             if (selectSlotObject == null)
                 return;
 
-            Debug.Log("선택된 아이템이 장착된 슬롯의 인덱스를 가져온다");
-            Debug.Log("선택된 아이템과 현재 장착될 슬롯의 인덱스에 있는 아이템을 Swap");
+            equipmentInventory.EquipItem(slotUIs[selectSlotObject]);
+
+            //UIManager.Instance.EquipItemInventory(slotUIs[selectSlotObejct]);
+
+            // 선택 해제
+            UpdateSelectSlot(null);
         }
 
         // 아이템 사용

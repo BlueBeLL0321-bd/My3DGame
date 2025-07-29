@@ -10,7 +10,7 @@ namespace My3DGame.InventorySystem
     /// <summary>
     /// 인벤토리를 관리하는 클래스
     /// 속성 : 인벤토리 컨테이너, 아이템 데이터베이스, 인벤토리 타입
-    /// 기능 : 인벤토리에 아이템 추가, 아이템 바꿔치기
+    /// 기능 : 인벤토리에 아이템 추가, 아이템 바꿔치기, 아이템 장착하기
     /// </summary>
     [CreateAssetMenu(fileName = "New Inventory", menuName = "Inventory System/Inventory")]
     public class InventorySO : ScriptableObject
@@ -119,8 +119,20 @@ namespace My3DGame.InventorySystem
             //
             Debug.Log($"{useSlot.item.name} 효과 구현");
             useSlot.AddAmount(-1);
+        }
 
-
+        // 아이템 장착하기
+        public void EquipItem(ItemSlot itemSlot)
+        {
+            // 매개 변수로 들어온 아이템이 장착될 위치 찾기
+            foreach (var slot in Slots)
+            {
+                if(slot.CanPlaceInSlot(itemSlot.ItemObject))
+                {
+                    SwapItems(slot, itemSlot);
+                    break;
+                }
+            }
         }
         #endregion
 

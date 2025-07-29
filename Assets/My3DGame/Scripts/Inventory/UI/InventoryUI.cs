@@ -130,6 +130,11 @@ namespace My3DGame.InventorySystem
         {
             // Debug.Log($"OnStartDrag SlotUI Object : {go.name}");
             MouseData.tempItemBeginDragged = CreateDragItem(go);
+
+            // 다른 인벤토리 UI 선택 해제
+            OnUpdateSelectSlot?.Invoke(null);
+            // 현재 인벤토리 UI 선택 해제
+            UpdateSelectSlot(null);
         }
 
         // 슬롯 UI를 가지고 마우스 드래그 중일 때 호출

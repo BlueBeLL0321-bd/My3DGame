@@ -12,6 +12,8 @@ namespace My3DGame.InventorySystem
     {
         #region Variables
         public GameObject[] staticSlots;
+
+        public InventorySO playerInventory;
         #endregion
 
         #region Custom Method
@@ -60,7 +62,7 @@ namespace My3DGame.InventorySystem
                 return;
 
             // 인벤토리에 제거하는 아이템 추가 - 인벤 풀 체크
-            if(UIManager.Instance.AddItemInventory(slotUIs[selectSlotObject].item, 1))
+            if(playerInventory.AddItem(slotUIs[selectSlotObject].item, 1))
             {
                 // 아이템 제거
                 slotUIs[selectSlotObject].RemoveItem();
@@ -74,8 +76,12 @@ namespace My3DGame.InventorySystem
         {
             foreach (var slotObject in staticSlots)
             {
+                // 빈 슬롯 체크
+                if (slotUIs[slotObject].item.id <= -1 || slotUIs[slotObject].amount <= 0)
+                    continue;
+
                 // 인벤토리에 제거하는 아이템 추가 - 인벤 풀 체크
-                if (UIManager.Instance.AddItemInventory(slotUIs[slotObject].item, 1))
+                if (playerInventory.AddItem(slotUIs[slotObject].item, 1))
                 {
                     // 아이템 제거
                     slotUIs[slotObject].RemoveItem();
@@ -83,6 +89,21 @@ namespace My3DGame.InventorySystem
             }
             // 선택 해제
             UpdateSelectSlot(null);
+        }
+
+        // 매개 변수로 들어온 아이템이 장착될 아이템 슬롯을 리턴
+        public void Equip(ItemSlot itemSlot)
+        {
+            // 매개 변수로 들어온 아이템이 장착될 위치 찾기
+            foreach (var go in staticSlots)
+            {
+                ItemSlot slot = slotUIs[go];
+                if(slot.CanPlaceInSlot(itemSlot.ItemObject))
+                {
+                    inventoryObject.SwapItems(slot, itemSlot);
+                    break;
+                }
+            }
         }
         #endregion
     }

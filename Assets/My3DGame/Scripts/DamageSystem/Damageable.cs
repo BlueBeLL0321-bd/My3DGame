@@ -81,8 +81,6 @@ namespace My3DGame
         // 대미지 입기
         public void TakeDamage(DamageMessage data)
         {
-            Debug.Log("TakeDamage() 호출됨");
-
             // 체력 체크
             if (CurrentHealth <= 0f)
                 return;
