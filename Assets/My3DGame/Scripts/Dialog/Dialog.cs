@@ -3,7 +3,9 @@ using System;
 
 namespace My3DGame
 {
-    // 대화창 정보를 관리하는 클래스
+    /// <summary>
+    /// 대화창 데이터 관리 클래스
+    /// </summary>
     public class Dialog
     {
         public int number;          // 대화 인덱스

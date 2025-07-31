@@ -5,7 +5,7 @@ using UnityEngine;
 namespace My3DGame
 {
     /// <summary>
-    /// 캐릭터 스탯 데이터를 가지고 있는 스크립터블 오브젝트
+    /// 캐릭터 스탯 데이터와 유저 게임 데이터를 가지고 있는 스크립터블 오브젝트
     /// </summary>
     [CreateAssetMenu(fileName = "new Stats", menuName = "Stats System/Character Stats")]
     public class StatsSO : ScriptableObject
@@ -13,11 +13,98 @@ namespace My3DGame
         #region Variables
         public Attribute[] attributes;          // 캐릭터 속성 배열
 
+        [SerializeField]
+        private UserData userData;              // 유저 게임 데이터
+
         // 스탯 변경 시 등록된 함수를 호출하는 이벤트 함수
         public Action<StatsSO> OnChangedStats;
 
         // 초기화 실행 여부 체크
         private bool isInitialized = false;
+        #endregion
+
+        #region Property
+        public int Level
+        {
+            get { return userData.level; }
+            private set { userData.level = value; }
+        }
+
+        public int Exp
+        {
+            get { return userData.exp; }
+            private set { userData.exp = value; }
+        }
+
+        public int Gold
+        {
+            get { return userData.gold; }
+            private set { userData.gold = value; }
+        }
+
+        public int CurrentHealth
+        {
+            get { return userData.health; }
+            private set { userData.health = value; }
+        }
+
+        public int CurrentMana
+        {
+            get { return userData.mana; }
+            private set { userData.mana = value; }
+        }
+
+        public int MaxHealth
+        {
+            get
+            {
+                int maxHealth = 0;
+                foreach (var attribute in attributes)
+                {
+                    // 체력 속성 찾기
+                    if(attribute.type == CharacterAttribute.Health)
+                    {
+                        maxHealth = attribute.value.ModifiedValue;
+                    }
+                }
+
+                return maxHealth;
+            }
+        }
+
+        public int MaxMana
+        {
+            get
+            {
+                int maxMana = 0;
+                foreach (var attribute in attributes)
+                {
+                    // 마나 속성 찾기
+                    if (attribute.type == CharacterAttribute.Mana)
+                    {
+                        maxMana = attribute.value.ModifiedValue;
+                    }
+                }
+
+                return maxMana;
+            }
+        }
+
+        public float HealthPercentage
+        {
+            get
+            {
+                return (MaxHealth > 0) ? (float)CurrentHealth / (float)MaxHealth : 0f;
+            }
+        }
+
+        public float ManaPercentage
+        {
+            get
+            {
+                return (MaxMana > 0) ? (float)CurrentMana / (float)MaxMana : 0f;
+            }
+        }
         #endregion
 
         #region Unity Event Method
@@ -32,11 +119,11 @@ namespace My3DGame
         private void InitializeAttributes()
         {
             // 초기화 실행 여부 체크
-            if (isInitialized)
-                return;
+            // if (isInitialized)
+            //     return;
 
-            isInitialized = true;
-            Debug.Log("캐릭터 Attributes 초기화");
+            // isInitialized = true;
+            Debug.Log("============캐릭터 Attributes 초기화");
 
             foreach (var attribute in attributes)
             {
@@ -50,6 +137,13 @@ namespace My3DGame
             SetBaseValue(CharacterAttribute.Strength, 100);
             SetBaseValue(CharacterAttribute.Health, 100);
             SetBaseValue(CharacterAttribute.Mana, 100);
+
+            // 유저 게임 데이터 초기화
+            Level = 1;
+            Exp = 0;
+            Gold = 100;
+            CurrentHealth = MaxHealth;
+            CurrentMana = MaxMana;
         }
 
         // 속성의 BaseValue 값 초기화
@@ -76,6 +170,19 @@ namespace My3DGame
             }
 
             // 지정된 타입이 없으면
+            return -1;
+        }
+
+        // 매개 변수로 들어온 속성 타입의 최종 계산값 구하기
+        public int GetModifiedValue(CharacterAttribute type)
+        {
+            foreach (var attribute in attributes)
+            {
+                if(attribute.type == type)
+                {
+                    return attribute.value.ModifiedValue;
+                }
+            }
             return -1;
         }
 

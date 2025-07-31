@@ -19,7 +19,7 @@ namespace My3DGame
         private event Action<ModifiableInt> OnModifiedValue;
 
         // modifiedValue 값을 계산하기 위한 스탯 값들을 저장하는 리스트
-        private List<IModifier> modifiers = new List<IModifier>();
+        public List<IModifier> modifiers = new List<IModifier>();
         #endregion
 
         #region Property

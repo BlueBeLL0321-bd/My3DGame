@@ -50,5 +50,23 @@ namespace My3DGame.Common
         Inventory,          // 창고형
         Equipment,          // 장착형
     }
+
+    // 퀘스트 타입
+    public enum QuestType
+    {
+        None = -1,
+        Kill,
+        Collect,
+    }
+
+    // NPC 타입
+    public enum NpcType
+    {
+        None = -1,
+        Merchant,
+        BlackSmith,
+        SkillMaster,
+        QuestGiver,
+    }
 }
 

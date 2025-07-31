@@ -54,6 +54,11 @@ namespace My3DGame.InventorySystem
             AddEvent(this.gameObject, EventTriggerType.PointerExit,
                 delegate { OnExitInterface(this.gameObject); });
         }
+
+        private void OnEnable()
+        {
+            
+        }
         #endregion
 
         #region Custom Method

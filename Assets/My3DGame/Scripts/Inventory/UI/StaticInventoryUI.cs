@@ -16,6 +16,14 @@ namespace My3DGame.InventorySystem
         public InventorySO playerInventory;
         #endregion
 
+        #region Unity Event Method
+        private void Start()
+        {
+            // 현재 장착 아이템의 buff값을 statsObject에 적용
+
+        }
+        #endregion
+
         #region Custom Method
         public override void CreateSlots()
         {
