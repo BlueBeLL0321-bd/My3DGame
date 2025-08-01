@@ -68,8 +68,8 @@ namespace My3DGame
             actionUI.text = "";
         }
 
-        // 마우스 클릭 시 NPC의 인터렉티브 액션 실행
-        public virtual void DoAction()
+        // 액션 키(e키) 입력 시 NPC의 인터렉티브 액션 실행
+        protected virtual void DoAction()
         {
             Debug.Log("NPC의 인터렉티브 액션 실행");
         }

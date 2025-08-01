@@ -59,6 +59,16 @@ namespace My3DGame.Common
         Collect,
     }
 
+    // 퀘스트 상태
+    public enum QuestState
+    {
+        None = -1,
+        Ready,              // 퀘스트 아직 받지 않은 상태
+        Accept,             // 퀘스트 수락 - 퀘스트 진행 중
+        Complete,           // 퀘스트 완료 - 목표 달성, 아직 보상은 받지 못함
+        Rewarded,           // 퀘스트 완료 후 보상 받음
+    }
+
     // NPC 타입
     public enum NpcType
     {

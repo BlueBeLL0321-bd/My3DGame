@@ -14,8 +14,8 @@ namespace My3DGame
         #region Variables
         // 데이터 파일 읽기
         [SerializeField]
-        private string xmlFile = "Dialog";          // 데이터 파일 이름
-        private XmlNodeList allNodes;               // 모든 대화 리스트
+        private string xmlFile = "DialogData";          // 데이터 파일 이름
+        private XmlNodeList allNodes;                   // 모든 대화 리스트
 
         // 현재 대화
         private Queue<Dialog> dialogs;
@@ -39,6 +39,8 @@ namespace My3DGame
             // 초기화
             dialogs = new Queue<Dialog>();
             InitDialog();
+
+            StartDialog(0);
         }
         #endregion
 
@@ -46,11 +48,11 @@ namespace My3DGame
         // xml 파일 읽어서 XmlNodeList에 넣기
         private void LoadDialogXml(string filename)
         {
-            var xmlTextFile = Resources.Load<TextAsset>("Dialog/" + filename);
+            var xmlTextFile = Resources.Load<TextAsset>("Data/" + filename);
 
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(xmlTextFile.text);
-            allNodes = xmlDoc.SelectNodes("root/dialog");
+            allNodes = xmlDoc.SelectNodes("Dialogs/dialogs/Dialog");
         }
         
         // Dialog 초기화
@@ -113,7 +115,7 @@ namespace My3DGame
             Dialog dialog = dialogs.Dequeue();
 
             // npc 이미지 보여주기
-            if(dialog.character > 0)
+            /*if(dialog.character > 0)
             {
                 npcImage.SetActive(true);
                 npcImage.GetComponent<Image>().sprite =
@@ -122,7 +124,7 @@ namespace My3DGame
             else
             {
                 npcImage.SetActive(false);
-            }
+            }*/
 
             // 대화 캐릭터 이름
             nameText.text = dialog.name;

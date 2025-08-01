@@ -16,6 +16,9 @@ namespace My3DGame.Manager
 
         public DynamicInventoryUI playerInventoryUI;
         public StaticInventoryUI playerEquipmentUI;
+
+        public DrawDialog dialogUI;
+        public QuestUI questUI;
         
         // 치팅
         public int index = 2;
@@ -42,6 +45,10 @@ namespace My3DGame.Manager
             else if(Input.GetKeyDown(KeyCode.U))
             {
                 TogglePlayerEquipmentUI();
+            }
+            else if(Input.GetKeyDown(KeyCode.Q))
+            {
+                ToggleQuestUI();
             }
 
             // 치트키
@@ -83,6 +90,8 @@ namespace My3DGame.Manager
 
             isOpen |= playerInventoryUI.gameObject.activeSelf;
             isOpen |= playerEquipmentUI.gameObject.activeSelf;
+            isOpen |= dialogUI.gameObject.activeSelf;
+            isOpen |= questUI.gameObject.activeSelf;
 
             return isOpen;
         }
@@ -105,6 +114,22 @@ namespace My3DGame.Manager
                 // 선택 해제
                 playerEquipmentUI.UpdateSelectSlot(null);
             }
+        }
+
+        public void OpenDialogUI(int dialogIndex)
+        {
+            Toggle(dialogUI.gameObject);
+            dialogUI.StartDialog(dialogIndex);
+        }
+
+        public void CloseDialogUI()
+        {
+            Toggle(dialogUI.gameObject);
+        }
+
+        public void ToggleQuestUI()
+        {
+            Toggle(questUI.gameObject);
         }
 
         // 인벤토리에 아이템 추가

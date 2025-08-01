@@ -15,7 +15,7 @@ namespace My3DGame
         public string description { get; set; }      // 퀘스트 설명
         public int dialogIndex { get; set; }         // 퀘스트를 의뢰, 진행, 완료하는 대화 내용
         public int level { get; set; }               // 퀘스트 레벨 제한
-        public int questType { get; set; }           // 퀘스트 타입
+        public QuestType questType { get; set; }     // 퀘스트 타입
         public int goalIndex { get; set; }           // 퀘스트 목표 인덱스,
         public int goalAmount { get; set; }          // 퀘스트 달성 목표 수량
         public int rewardGold { get; set; }          // 퀘스트 보상 골드
