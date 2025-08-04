@@ -2530,6 +2530,59 @@ MonoBehaviour:
   - {fileID: 56877639}
   - {fileID: 715822109}
   equipmentInventory: {fileID: 0}
+--- !u!1 &357297273
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 357297275}
+  - component: {fileID: 357297274}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &357297274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 357297273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7200ffc31e9e2bc4babc2da5b6bc9459, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerQuests: []
+  currentQuest:
+    number: 0
+    questState: 0
+    questGoal:
+      questType: 0
+      goalIndex: 0
+      goalAmount: 0
+      currentAmount: 0
+--- !u!4 &357297275
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 357297273}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &365614920
 GameObject:
   m_ObjectHideFlags: 0
@@ -3890,7 +3943,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Item Name
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 07643cf359c195a4aa0046db72aee07a, type: 2}
   m_sharedMaterial: {fileID: 4805475372923699731, guid: 07643cf359c195a4aa0046db72aee07a, type: 2}
@@ -6178,11 +6231,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1723005381}
+  - {fileID: 1608084736}
   - {fileID: 1549939502}
   - {fileID: 882195976}
   - {fileID: 439671633}
   - {fileID: 345240105}
-  - {fileID: 1608084736}
   - {fileID: 1057508931}
   - {fileID: 27025456}
   m_Father: {fileID: 128925261}
@@ -6385,6 +6438,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f593e3e7b13c1e42a3c16bceb33b10d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nameText: {fileID: 121206323}
+  descriptionText: {fileID: 2077233511}
+  goalText: {fileID: 682159798}
+  rewardGoldText: {fileID: 851643890}
+  rewardExpText: {fileID: 174075657}
+  rewardItemText: {fileID: 584480766}
+  itemIcon: {fileID: 2891606}
+  acceptButton: {fileID: 1657363171}
+  giveUpButton: {fileID: 1817643474}
+  okButton: {fileID: 1354386736}
 --- !u!1 &1092144501
 GameObject:
   m_ObjectHideFlags: 0
@@ -7935,9 +7998,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: My3DGame.InventorySystem.StaticInventoryUI, Assembly-CSharp
-        m_MethodName: UnequipAll
+      - m_Target: {fileID: 1057508932}
+        m_TargetAssemblyTypeName: My3DGame.QuestUI, Assembly-CSharp
+        m_MethodName: CloseQuestUI
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -9656,9 +9719,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: My3DGame.InventorySystem.StaticInventoryUI, Assembly-CSharp
-        m_MethodName: UnequipAll
+      - m_Target: {fileID: 1057508932}
+        m_TargetAssemblyTypeName: My3DGame.QuestUI, Assembly-CSharp
+        m_MethodName: AcceptQuest
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10454,9 +10517,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: My3DGame.InventorySystem.StaticInventoryUI, Assembly-CSharp
-        m_MethodName: UnequipAll
+      - m_Target: {fileID: 1057508932}
+        m_TargetAssemblyTypeName: My3DGame.QuestUI, Assembly-CSharp
+        m_MethodName: GiveUpQuest
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -16607,7 +16670,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   npc:
     type: 3
-    number: 1
+    number: 0
     name: Peasant
   interactiveRange: 2
   actionUI: {fileID: 1639293978}
@@ -17836,6 +17899,7 @@ SceneRoots:
   - {fileID: 1837383063}
   - {fileID: 1196514520}
   - {fileID: 54354459}
+  - {fileID: 357297275}
   - {fileID: 574387676}
   - {fileID: 1270475638}
   - {fileID: 7642618979279353131}

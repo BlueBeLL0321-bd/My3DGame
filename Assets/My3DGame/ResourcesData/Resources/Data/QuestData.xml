@@ -8,7 +8,7 @@
 			<description>Kill Zombie 1</description>
 			<dialogIndex>3</dialogIndex>
 			<level>1</level>
-			<questType>0</questType>
+			<questType>Kill</questType>
 			<goalIndex>0</goalIndex>
 			<goalAmount>1</goalAmount>
 			<rewardGold>100</rewardGold>
@@ -22,7 +22,7 @@
 			<description>Collect Ammo Box 2</description>
 			<dialogIndex>6</dialogIndex>
 			<level>2</level>
-			<questType>1</questType>
+			<questType>Collect</questType>
 			<goalIndex>0</goalIndex>
 			<goalAmount>2</goalAmount>
 			<rewardGold>150</rewardGold>
@@ -36,7 +36,7 @@
 			<description>Kill Zombie 1</description>
 			<dialogIndex>3</dialogIndex>
 			<level>4</level>
-			<questType>0</questType>
+			<questType>Kill</questType>
 			<goalIndex>0</goalIndex>
 			<goalAmount>1</goalAmount>
 			<rewardGold>100</rewardGold>
@@ -50,7 +50,7 @@
 			<description>Collect Ammo Box 2</description>
 			<dialogIndex>6</dialogIndex>
 			<level>5</level>
-			<questType>1</questType>
+			<questType>Collect</questType>
 			<goalIndex>0</goalIndex>
 			<goalAmount>2</goalAmount>
 			<rewardGold>150</rewardGold>

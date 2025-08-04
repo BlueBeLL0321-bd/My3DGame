@@ -2,6 +2,7 @@ using UnityEngine;
 using My3DGame.Util;
 using My3DGame.ItemSystem;
 using My3DGame.InventorySystem;
+using My3DGame.Common;
 
 namespace My3DGame.Manager
 {
@@ -48,7 +49,14 @@ namespace My3DGame.Manager
             }
             else if(Input.GetKeyDown(KeyCode.Q))
             {
-                ToggleQuestUI();
+                if(questUI.gameObject.activeSelf)
+                {
+                    CloseQuestUI();
+                }
+                else
+                {
+                    OpenPlayerQuestUI();
+                }
             }
 
             // 치트키
@@ -116,9 +124,18 @@ namespace My3DGame.Manager
             }
         }
 
-        public void OpenDialogUI(int dialogIndex)
+        public void OpenDialogUI(int dialogIndex, NpcType npcType = NpcType.None)
         {
             Toggle(dialogUI.gameObject);
+            Time.timeScale = 1f;
+
+            dialogUI.OnCloseDialog += CloseDialogUI;
+            // 퀘스트를 가지고 있는 NPC이면
+            if (npcType == NpcType.QuestGiver)       
+            {
+                dialogUI.OnCloseDialog += OpenQuestUI;
+            }
+
             dialogUI.StartDialog(dialogIndex);
         }
 
@@ -127,9 +144,34 @@ namespace My3DGame.Manager
             Toggle(dialogUI.gameObject);
         }
 
-        public void ToggleQuestUI()
+        // 대화창 종료 시 오픈되는 Quest UI
+        public void OpenQuestUI()
+        {
+            if(questUI.OpenQuestUI() == true)
+            {
+                Toggle(questUI.gameObject);
+                questUI.OnCloseQuestUI += ToggleQuestUI;
+            }
+        }
+
+        // 현재 진행 중인 플레이어의 Quest 정보를 확인하는 Quest UI
+        public void OpenPlayerQuestUI()
+        {
+            if(questUI.OpenPlayerQuestUI())
+            {
+                Toggle(questUI.gameObject);
+                questUI.OnCloseQuestUI += ToggleQuestUI;
+            }
+        }
+
+        private void ToggleQuestUI()
         {
             Toggle(questUI.gameObject);
+        }
+
+        public void CloseQuestUI()
+        {
+            questUI.CloseQuestUI();
         }
 
         // 인벤토리에 아이템 추가

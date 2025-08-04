@@ -88,7 +88,8 @@ namespace My3DGame.Manager
         // 퀘스트 데이터 가져오기
         public static QuestData GetQuestData()
         {
-            if (dialogData == null)
+            // 퀘스트 데이터 가져오기
+            if (questData == null)
             {
                 questData = ScriptableObject.CreateInstance<QuestData>();
                 questData.LoadData();
