@@ -1,5 +1,7 @@
 using My3DGame.Util;
 using UnityEngine;
+using My3DGame.Manager;
+using My3DGame.Common;
 
 namespace My3DGame.AI
 {
@@ -148,6 +150,9 @@ namespace My3DGame.AI
         {
             // TODO
             stateMachine.ChangeState(new DeathState());
+
+            // 퀘스트 진행 사항 체크
+            QuestManager.Instance.UpdatePlayerQuests(QuestType.Kill, 0);
 
             // 오브젝트 킬
             Destroy(gameObject, 2f);

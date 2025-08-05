@@ -47,7 +47,7 @@ namespace My3DGame.AI
         {
             // 디텍션하다 타깃이 잡히면 추격(걷기) 상태
             // Attack 범위에 들어오면 공격 상태로 변경
-            if(enemy.Target)
+            /*if(enemy.Target)
             {
                 // 공격 가능 여부 체크
                 if(enemy.IsAttackable)
@@ -68,7 +68,7 @@ namespace My3DGame.AI
                 {
                     stateMachine.ChangeState(new PatrolState());
                 }
-            }
+            }*/
         }
 
         // 상태 나가기

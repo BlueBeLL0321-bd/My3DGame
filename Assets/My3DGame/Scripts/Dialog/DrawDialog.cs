@@ -88,8 +88,10 @@ namespace My3DGame
             nameText.text = dialog.name;
 
             // 대화 내용
-            tmpSentence = dialog.sentence;
-            StartCoroutine(TypingSentence(dialog.sentence));
+            sentenceText.text = dialog.sentence;
+            nextButton.SetActive(true);
+            // tmpSentence = dialog.sentence;
+            // StartCoroutine(TypingSentence(dialog.sentence));
         }
 
         // 대화 내용 타이핑 연출

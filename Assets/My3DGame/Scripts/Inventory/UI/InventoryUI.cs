@@ -35,14 +35,17 @@ namespace My3DGame.InventorySystem
             // 인벤토리 오브젝트에 있는 아이템 슬롯으로 슬롯 오브젝트 생성
             CreateSlots();
 
-            // 인벤토리 오브젝트에 있는 아이템 슬롯 값 설정
-            for (int i = 0; i < inventoryObject.Slots.Length; i++)
+            if(inventoryObject != null)
             {
-                inventoryObject.Slots[i].parent = inventoryObject;
-                inventoryObject.Slots[i].OnPostUpdate += OnPostUpdate;
+                // 인벤토리 오브젝트에 있는 아이템 슬롯 값 설정
+                for (int i = 0; i < inventoryObject.Slots.Length; i++)
+                {
+                    inventoryObject.Slots[i].parent = inventoryObject;
+                    inventoryObject.Slots[i].OnPostUpdate += OnPostUpdate;
 
-                // 강제로 슬롯 업데이트 실행
-                inventoryObject.Slots[i].OnPostUpdate?.Invoke(inventoryObject.Slots[i]);
+                    // 강제로 슬롯 업데이트 실행
+                    inventoryObject.Slots[i].OnPostUpdate?.Invoke(inventoryObject.Slots[i]);
+                }
             }
 
             // 슬롯 초기화

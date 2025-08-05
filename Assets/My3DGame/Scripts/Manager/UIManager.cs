@@ -3,6 +3,7 @@ using My3DGame.Util;
 using My3DGame.ItemSystem;
 using My3DGame.InventorySystem;
 using My3DGame.Common;
+using My3DGame;
 
 namespace My3DGame.Manager
 {
@@ -20,6 +21,7 @@ namespace My3DGame.Manager
 
         public DrawDialog dialogUI;
         public QuestUI questUI;
+        public ShopUI shopUI;
         
         // 치팅
         public int index = 2;
@@ -57,6 +59,10 @@ namespace My3DGame.Manager
                 {
                     OpenPlayerQuestUI();
                 }
+            }
+            else if(Input.GetKeyDown(KeyCode.P))
+            {
+                ToggleShopUI();
             }
 
             // 치트키
@@ -100,6 +106,7 @@ namespace My3DGame.Manager
             isOpen |= playerEquipmentUI.gameObject.activeSelf;
             isOpen |= dialogUI.gameObject.activeSelf;
             isOpen |= questUI.gameObject.activeSelf;
+            isOpen |= shopUI.gameObject.activeSelf;
 
             return isOpen;
         }
@@ -127,7 +134,7 @@ namespace My3DGame.Manager
         public void OpenDialogUI(int dialogIndex, NpcType npcType = NpcType.None)
         {
             Toggle(dialogUI.gameObject);
-            Time.timeScale = 1f;
+            // Time.timeScale = 1f;
 
             dialogUI.OnCloseDialog += CloseDialogUI;
             // 퀘스트를 가지고 있는 NPC이면
@@ -172,6 +179,11 @@ namespace My3DGame.Manager
         public void CloseQuestUI()
         {
             questUI.CloseQuestUI();
+        }
+
+        private void ToggleShopUI()
+        {
+            Toggle(shopUI.gameObject);
         }
 
         // 인벤토리에 아이템 추가

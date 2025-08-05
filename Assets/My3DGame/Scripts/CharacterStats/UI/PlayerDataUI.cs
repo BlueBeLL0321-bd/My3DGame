@@ -42,7 +42,9 @@ namespace My3DGame
             manaBar.fillAmount = statsObject.ManaPercentage;
 
             levelText.text = statsObject.Level.ToString();
-            expText.text = statsObject.Exp.ToString();
+
+            int needForLevelUp = statsObject.GetExpForLevelUp(statsObject.Level);
+            expText.text = statsObject.Exp.ToString() + " / " + needForLevelUp.ToString();
             goldText.text = statsObject.Gold.ToString();
         }
 

@@ -146,6 +146,7 @@ namespace My3DGame
             CurrentMana = MaxMana;
         }
 
+        #region Stats Value
         // 속성의 BaseValue 값 초기화
         private void SetBaseValue(CharacterAttribute type, int value)
         {
@@ -191,6 +192,73 @@ namespace My3DGame
         {
             OnChangedStats?.Invoke(this);
         }
+        #endregion
+
+        #region UserData Value
+        public void AddGold(int amount)
+        {
+            Gold += amount;
+
+            OnChangedStats?.Invoke(this);
+        }
+
+        // 소지금 체크
+        public bool EnoughGold(int amount)
+        {
+            return Gold >= amount;
+        }
+
+        public bool UseGold(int amount)
+        {
+            if(Gold < amount)
+            {
+                Debug.Log("소지금 부족");
+                return false;
+            }
+
+            Gold -= amount;
+
+            // 속성 값 변경 시 호출되는 함수
+            OnChangedStats?.Invoke(this);
+
+            return true;
+        }
+
+        // 레벨 업 공식 : 현재(지정한) 레벨에서 다음 레벨로 가는 데 필요한 경험치 계산
+        public int GetExpForLevelUp(int level)
+        {
+            // 표, 레벨 업 공식
+            return level * 100;
+        }
+
+        // 경험치 추가
+        public bool AddExp(int amount)
+        {
+            bool isLevelUp = false;
+
+            Exp += amount;
+
+            // 레벨 업에 필요한 경험치
+            int needForLevelUp = GetExpForLevelUp(Level);
+
+            while(Exp >= needForLevelUp)
+            {
+                Exp -= needForLevelUp;
+                Level++;
+
+                isLevelUp = true;
+
+                // 레벨 업한 레벨을 가지고 다시 레벨 업에 필요한 경험치를 구한다
+                needForLevelUp = GetExpForLevelUp(Level);
+            }
+
+            // 속성 값 변경 시 호출되는 함수
+            OnChangedStats?.Invoke(this);
+
+            return isLevelUp;
+        }
+        #endregion
+
         #endregion
     }
 }

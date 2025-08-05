@@ -42,7 +42,7 @@ namespace My3DGame
             Quest quest = DataManager.GetQuestData().quests.quests[questObject.number];
 
             nameText.text = quest.name;
-            descriptionText.text = quest.description;
+            descriptionText.text = questObject.questGoal.IsReached ? "Quest Completed" : quest.description;
 
             goalText.text = questObject.questGoal.currentAmount.ToString() + " / " + quest.goalAmount.ToString();
             rewardGoldText.text = quest.rewardGold.ToString();

@@ -1,8 +1,11 @@
 using UnityEngine;
 using My3DGame;
 using My3DGame.Util;
+using My3DGame.InventorySystem;
 using System.Collections.Generic;
 using System;
+using My3DGame.Common;
+using My3DGame.ItemSystem;
 
 namespace My3DGame.Manager
 {
@@ -12,6 +15,9 @@ namespace My3DGame.Manager
     public class QuestManager : Singleton<QuestManager>
     {
         #region Variables
+        public InventorySO playerInventory;
+        public StatsSO playerStats;
+
         public List<QuestObject> playerQuests;          // 플레이어가 현재 진행 중인 퀘스트 리스트
 
         public QuestObject currentQuest;                // 텍스트 UI에 전달되는 퀘스트
@@ -65,6 +71,7 @@ namespace My3DGame.Manager
             onGiveUpQuest?.Invoke(currentQuest);
 
             playerQuests.Remove(currentQuest);
+            Debug.Log($"playerQuests.Count : {playerQuests.Count}");
         }
 
         // 퀘스트 완료 시 보상 받는다
@@ -75,14 +82,63 @@ namespace My3DGame.Manager
                 return;
 
             Quest quest = DataManager.GetQuestData().quests.quests[currentQuest.number];
-            Debug.Log($"{quest.rewardGold}골드를 보상 받았습니다");
-            Debug.Log($"{quest.rewardExp}경험치를 보상 받았습니다");
+
+            /*Debug.Log($"{quest.rewardGold}골드를 보상 받았습니다");
+            Debug.Log($"{quest.rewardExp}경험치를 보상 받았습니다");*/
+            playerStats.AddGold(quest.rewardGold);
+            playerStats.AddExp(quest.rewardExp);
+
+            quest.rewardItem = 1;
             if(quest.rewardItem >= 0)
             {
-                Debug.Log($"{quest.rewardItem}번 아이템을 보상 받았습니다");
+                // Debug.Log($"{quest.rewardItem}번 아이템을 보상 받았습니다");
+                ItemSO itemObject = playerInventory.database.itemObjects[quest.rewardItem];
+                // 아이템 생성
+                Item newItem = new Item(itemObject);
+                playerInventory.AddItem(newItem, 1);
             }
             // 리스트에서 제거
-            playerQuests.Remove(currentQuest);
+            foreach (var q in playerQuests)
+            {
+                if(currentQuest.number == q.number)
+                {
+                    playerQuests.Remove(q);
+                }
+            }
+        }
+
+        // 퀘스트 진행 사항 업데이트
+        // 매개 변수로 진행한 퀘스트 타입과 퀘스트 인덱스를 전달
+        public void UpdatePlayerQuests(QuestType type, int goalIndex)
+        {
+            switch(type)
+            {
+                case QuestType.Kill:
+                    foreach (var quest in playerQuests)
+                    {
+                        quest.EnemyKill(goalIndex);
+
+                        if(quest.questGoal.IsReached)
+                        {
+                            quest.questState = QuestState.Complete;
+                            onCompletedQuest?.Invoke(quest);
+                        }
+                    }
+                    break;
+
+                case QuestType.Collect:
+                    foreach (var quest in playerQuests)
+                    {
+                        quest.ItemCollect(goalIndex);
+
+                        if (quest.questGoal.IsReached)
+                        {
+                            quest.questState = QuestState.Complete;
+                            onCompletedQuest?.Invoke(quest);
+                        }
+                    }
+                    break;
+            }
         }
         #endregion
     }

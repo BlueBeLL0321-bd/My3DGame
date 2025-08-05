@@ -49,6 +49,7 @@ namespace My3DGame.Common
     {
         Inventory,          // 창고형
         Equipment,          // 장착형
+        Shop,               // 상점형
     }
 
     // 퀘스트 타입

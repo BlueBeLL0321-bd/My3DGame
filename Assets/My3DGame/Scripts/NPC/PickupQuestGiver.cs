@@ -80,7 +80,7 @@ namespace My3DGame
             }
 
             // quest[0] : 지금 NPC가 진행할 Quest
-            QuestManager.Instance.SetCurrentQuest(quests[0]);
+            questManager.SetCurrentQuest(quests[0]);
             int index = DataManager.GetQuestData().quests.quests[quests[0].number].dialogIndex;
 
             switch(quests[0].questState)
@@ -93,8 +93,20 @@ namespace My3DGame
                     break;
                 case QuestState.Complete:
                     uiManager.OpenDialogUI(index + 2, NpcType.QuestGiver);
+                    // 퀘스트 완료 보상 받는다
+                    CompletedQuest();
                     break;
             }
+        }
+
+        // 퀘스트 완료 보상 받는다
+        private void CompletedQuest()
+        {
+            // 보상 받기
+            questManager.RewardQuest();
+
+            // NPC 퀘스트 제거
+            quests.Remove(quests[0]);
         }
 
         // 퀘스트 수락 시 호출되는 함수
