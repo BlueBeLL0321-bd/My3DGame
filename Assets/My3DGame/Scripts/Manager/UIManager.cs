@@ -181,7 +181,7 @@ namespace My3DGame.Manager
             questUI.CloseQuestUI();
         }
 
-        private void ToggleShopUI()
+        public void ToggleShopUI()
         {
             Toggle(shopUI.gameObject);
         }
